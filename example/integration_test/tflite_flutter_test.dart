@@ -354,6 +354,7 @@ void main() {
         'test/$addFileName',
         options: tfl.InterpreterOptions()..useNnApiForAndroid = true,
       );
+      expect(interpreter, isNotNull);
       var o = [1.23, 6.54, 7.81];
       var two = [o, o, o, o, o, o, o, o];
       var three = [two, two, two, two, two, two, two, two];
@@ -395,6 +396,7 @@ void main() {
         ..addDelegate(coreMlDelegate);
       interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
           options: interpreterOptions);
+      expect(interpreter, isNotNull);
       var o = [1.23, 6.54, 7.81];
       var two = [o, o, o, o, o, o, o, o];
       var three = [two, two, two, two, two, two, two, two];
@@ -414,11 +416,16 @@ void main() {
       if (!Platform.isIOS) return;
 
       tfl.Interpreter interpreter;
-      final gpuDelegate = tfl.GpuDelegate();
+      final gpuDelegate = tfl.GpuDelegate(
+        options: tfl.GpuDelegateOptions(
+            allowPrecisionLoss: true,
+            waitType: tfl.TFLGpuDelegateWaitType.active),
+      );
       var interpreterOptions = tfl.InterpreterOptions()
         ..addDelegate(gpuDelegate);
       interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
           options: interpreterOptions);
+      expect(interpreter, isNotNull);
       var o = [1.23, 6.54, 7.81];
       var two = [o, o, o, o, o, o, o, o];
       var three = [two, two, two, two, two, two, two, two];

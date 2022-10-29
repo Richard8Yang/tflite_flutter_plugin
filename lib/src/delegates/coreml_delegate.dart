@@ -18,8 +18,11 @@ class CoreMlDelegate implements Delegate {
 
   factory CoreMlDelegate({CoreMlDelegateOptions? options}) {
     if (options == null) {
+      // Per the implementation of TfLiteCoreMlDelegateCreate in TensorFlow, 
+      // the option MUST NOT be nullptr, otherwise it will panic.
+      options = CoreMlDelegateOptions();
       return CoreMlDelegate._(
-        tfliteCoreMlDelegateCreate(nullptr),
+        tfliteCoreMlDelegateCreate(options.base),
       );
     }
     return CoreMlDelegate._(tfliteCoreMlDelegateCreate(options.base));
@@ -46,7 +49,7 @@ class CoreMlDelegateOptions {
     TfLiteCoreMlDelegateEnabledDevices enabledDevices =
         TfLiteCoreMlDelegateEnabledDevices
             .TfLiteCoreMlDelegateDevicesWithNeuralEngine,
-    int coremlVersion = 0,
+    int coremlVersion = 2,
     int maxDelegatedPartitions = 0,
     int minNodesPerPartition = 2,
   }) {

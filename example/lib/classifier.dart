@@ -28,7 +28,16 @@ class Classifier {
 
   void _loadModel() async {
     // Creating the interpreter using Interpreter.fromAsset
-    _interpreter = await Interpreter.fromAsset(_modelFile);
+    /*final gpuDelegate = tfl.GpuDelegate(
+      options: tfl.GpuDelegateOptions(
+          allowPrecisionLoss: true,
+          waitType: tfl.TFLGpuDelegateWaitType.active),
+    );*/
+    final gpuDelegate = CoreMlDelegate();
+    //final gpuDelegate = GpuDelegate();
+    var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegate);
+    _interpreter =
+        await Interpreter.fromAsset(_modelFile, options: interpreterOptions);
     print('Interpreter loaded successfully');
   }
 
