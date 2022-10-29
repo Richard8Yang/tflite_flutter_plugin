@@ -345,80 +345,95 @@ void main() {
       interpreter.close();
     });
 
-    if (Platform.isAndroid) {
-      test('using set use NnApi', () async {
-        tfl.Interpreter interpreter;
-        interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
-            options: tfl.InterpreterOptions()..useNnApiForAndroid = true);
-        var o = [1.23, 6.54, 7.81];
-        var two = [o, o, o, o, o, o, o, o];
-        var three = [two, two, two, two, two, two, two, two];
-        var four = [three];
-        var output = List.filled(1 * 8 * 8 * 3, 0).reshape([1, 8, 8, 3]);
-        interpreter.run(four, output);
-        var exp = '';
-        if (output[0][0][0][0] is double) {
-          exp = (output[0][0][0][0] as double).toStringAsFixed(2);
-        }
-        expect(exp, '3.69');
-        interpreter.close();
-      });
-      test('using NnApiDelegate', () async {
-        tfl.Interpreter interpreter;
-        interpreter = await tfl.Interpreter.fromAsset(
-          'test/$addFileName',
-          options: tfl.InterpreterOptions()..useNnApiForAndroid = true,
-        );
-        var o = [1.23, 6.54, 7.81];
-        var two = [o, o, o, o, o, o, o, o];
-        var three = [two, two, two, two, two, two, two, two];
-        var four = [three];
-        var output = List.filled(1 * 8 * 8 * 3, 0).reshape([1, 8, 8, 3]);
-        interpreter.run(four, output);
-        var exp = '';
-        if (output[0][0][0][0] is double) {
-          exp = (output[0][0][0][0] as double).toStringAsFixed(2);
-        }
-        expect(exp, '3.69');
-        interpreter.close();
-      });
+    // Android NnApi & GPU delegate tests
+    test('using Android NnApiDelegate', () async {
+      if (!Platform.isAndroid) return;
 
-      // Unable to create interpreter
-      test('using GpuDelegateV2 android', () async {
-        tfl.Interpreter interpreter;
-        final gpuDelegate = tfl.GpuDelegateV2();
-        var interpreterOptions = tfl.InterpreterOptions()
-          ..addDelegate(gpuDelegate);
-        interpreter = await tfl.Interpreter.fromAsset(
-            'text_classification.tflite',
-            options: interpreterOptions);
-        expect(interpreter, isNotNull);
-        interpreter.close();
-      });
-
-      if (Platform.isIOS) {
-        test('using GpuDelegate iOS', () async {
-          tfl.Interpreter interpreter;
-          final gpuDelegate = tfl.GpuDelegate();
-          var interpreterOptions = tfl.InterpreterOptions()
-            ..addDelegate(gpuDelegate);
-          interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
-              options: interpreterOptions);
-          var o = [1.23, 6.54, 7.81];
-          var two = [o, o, o, o, o, o, o, o];
-          var three = [two, two, two, two, two, two, two, two];
-          var four = [three];
-          var output = List.filled(1 * 8 * 8 * 3, 0).reshape([1, 8, 8, 3]);
-          interpreter.run(four, output);
-          var exp = '';
-          if (output[0][0][0][0] is double) {
-            exp = (output[0][0][0][0] as double).toStringAsFixed(2);
-          }
-          expect(exp, '3.69');
-          interpreter.close();
-        });
+      tfl.Interpreter interpreter;
+      interpreter = await tfl.Interpreter.fromAsset(
+        'test/$addFileName',
+        options: tfl.InterpreterOptions()..useNnApiForAndroid = true,
+      );
+      var o = [1.23, 6.54, 7.81];
+      var two = [o, o, o, o, o, o, o, o];
+      var three = [two, two, two, two, two, two, two, two];
+      var four = [three];
+      var output = List.filled(1 * 8 * 8 * 3, 0).reshape([1, 8, 8, 3]);
+      interpreter.run(four, output);
+      var exp = '';
+      if (output[0][0][0][0] is double) {
+        exp = (output[0][0][0][0] as double).toStringAsFixed(2);
       }
-    }
+      expect(exp, '3.69');
+      interpreter.close();
+
+      print("Finish");
+    });
+    test('using Android GpuDelegateV2', () async {
+      if (!Platform.isAndroid) return;
+
+      tfl.Interpreter interpreter;
+      final gpuDelegate = tfl.GpuDelegateV2();
+      var interpreterOptions = tfl.InterpreterOptions()
+        ..addDelegate(gpuDelegate);
+      interpreter = await tfl.Interpreter.fromAsset(
+          'text_classification.tflite',
+          options: interpreterOptions);
+      expect(interpreter, isNotNull);
+      interpreter.close();
+
+      print("Finish");
+    });
+
+    // iOS CoreML & GPU delegate tests
+    test('using iOS CoreMLDelegate', () async {
+      if (!Platform.isIOS) return;
+
+      tfl.Interpreter interpreter;
+      final coreMlDelegate = tfl.CoreMlDelegate();
+      var interpreterOptions = tfl.InterpreterOptions()
+        ..addDelegate(coreMlDelegate);
+      interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
+          options: interpreterOptions);
+      var o = [1.23, 6.54, 7.81];
+      var two = [o, o, o, o, o, o, o, o];
+      var three = [two, two, two, two, two, two, two, two];
+      var four = [three];
+      var output = List.filled(1 * 8 * 8 * 3, 0).reshape([1, 8, 8, 3]);
+      interpreter.run(four, output);
+      var exp = '';
+      if (output[0][0][0][0] is double) {
+        exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+      }
+      expect(exp, '3.69');
+      interpreter.close();
+
+      print("Finish");
+    });
+    test('using iOS GpuDelegate', () async {
+      if (!Platform.isIOS) return;
+
+      tfl.Interpreter interpreter;
+      final gpuDelegate = tfl.GpuDelegate();
+      var interpreterOptions = tfl.InterpreterOptions()
+        ..addDelegate(gpuDelegate);
+      interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
+          options: interpreterOptions);
+      var o = [1.23, 6.54, 7.81];
+      var two = [o, o, o, o, o, o, o, o];
+      var three = [two, two, two, two, two, two, two, two];
+      var four = [three];
+      var output = List.filled(1 * 8 * 8 * 3, 0).reshape([1, 8, 8, 3]);
+      interpreter.run(four, output);
+      var exp = '';
+      if (output[0][0][0][0] is double) {
+        exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+      }
+      expect(exp, '3.69');
+      interpreter.close();
+
+      print("Finish");
+    });
   });
 
   group('tensor static', () {
