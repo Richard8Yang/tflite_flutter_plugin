@@ -36,7 +36,7 @@ DynamicLibrary tflitelib = () {
     return DynamicLibrary.process();
   } else {    
     return DynamicLibrary.open(
-      Directory(Platform.resolvedExecutable).parent.path + '/blobs/${binaryName}'
+      Directory(Platform.resolvedExecutable).parent.path + '/blobs/$binaryName'
     );
   }
 }();
